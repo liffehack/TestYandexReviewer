@@ -87,8 +87,8 @@ def get_history():
         
 with DAG(
     dag_id=f'extract_exchangerate',
-    schedule_interval=None,
-    start_date=pendulum.datetime(2022, 3, 1, tz="UTC"),
+    schedule_interval="*/3 * * * *",
+    start_date=pendulum.datetime(2022, 3, 20, tz="UTC"),
     catchup=False,
 ) as dag:
     step_1 = DummyOperator(task_id='extract')
