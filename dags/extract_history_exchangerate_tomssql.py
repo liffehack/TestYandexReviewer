@@ -79,7 +79,7 @@ def to_mssql(data):
         cursor.close()
 
 def get_history():
-    """ Получанм историю в в последовательном цикле для каждого дня из периода date_from - date_to и кладем в базу"""
+    """ Функция получает историю за период date_from - date_to и кладет в базу"""
     for i in range(0, timedelta, 1):
         historical_date = date_from + datetime.timedelta(i)
         data = get_rate(historical_date)
