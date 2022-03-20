@@ -91,7 +91,7 @@ with DAG(
     start_date=pendulum.datetime(2022, 3, 20, tz="UTC"),
     catchup=False,
 ) as dag:
-    step_1 = DummyOperator(task_id='extract')
+    step_1 = DummyOperator(task_id='extract_and_load')
     get_history_operator = PythonOperator(task_id='get_history', python_callable=get_history, dag=dag)
     
-    step_1 >> get_rate_operator >> get_history_operator
+    step_1 >> get_history_operator
