@@ -86,8 +86,8 @@ def get_history():
         to_mssql(data)
         
 with DAG(
-    dag_id=f'extract_exchangerate',
-    schedule_interval="*/3 * * * *",
+    dag_id=f'extract_history_exchangerate',
+    schedule_interval=None,
     start_date=pendulum.datetime(2022, 3, 20, tz="UTC"),
     catchup=False,
 ) as dag:

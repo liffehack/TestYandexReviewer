@@ -79,8 +79,8 @@ def to_mssql(ti):
         cursor.close()
 
 with DAG(
-    dag_id=f'extract_history_exchangerate',
-    schedule_interval=None,
+    dag_id=f'extract_exchangerate',
+    schedule_interval='0 */3 * * *',
     start_date=pendulum.datetime(2022, 3, 20, tz="UTC"),
     catchup=False,
 ) as dag:
