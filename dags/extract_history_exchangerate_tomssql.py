@@ -11,30 +11,33 @@ import datetime
 
 log = logging.getLogger(__name__)
 
-#Example 'Driver={ODBC Driver 17 for SQL Server};Server=localhost,1433;Database=Stage;uid={ЗАМЕНИ МЕНЯ};pwd={ЗАМЕНИ МЕНЯ}'
+#Example 'Driver={ODBC Driver 17 for SQL Server};Server=localhost,1433;Database=master;uid={ЗАМЕНИ МЕНЯ};pwd={ЗАМЕНИ МЕНЯ}'
 ConnectionStringMSSQL = Variable.get("ConnectionStringMSSQL")
 
 date_from = datetime.date(2020, 2, 1) # Дата от
 date_to = datetime.date(2022, 9, 1) # Дата до
 timedelta = (date_to - date_from).days
 
+sql_create_database = f'''
+if db_id(N'Stage') is null
+begin
+    create database Stage;
+end
+'''
 # Sql запрос создания таблицы
 sql_create_table = f'''
-use Stage;
-go
-if object_id(N'dbo.CurrencyRate', N'U') is null
+if object_id(N'Stage.dbo.CurrencyRate', N'U') is null
 begin
-    create table dbo.CurrencyRate (
+    create table Stage.dbo.CurrencyRate (
         Id int identity(1,1) not null
             constraint PK_CurrencyRate primary key,
-        CurrencyFrom varchar not null,
-        CurrencyTo varchar not null,
-        [Date] varchar not null,
-        Rate varchar not null,
+        CurrencyFrom nvarchar(max) not null,
+        CurrencyTo nvarchar(max) not null,
+        [Date] nvarchar(max) not null,
+        Rate nvarchar(max) not null,
         LoadDatetime datetime2 default getdate()
     );
 end
-go
 '''
 
 def get_rate(date=None):
@@ -59,7 +62,7 @@ def get_msssql_connection():
     """
     Установка соединения с Sql Server
     """
-    connection = pyodbc.connect(ConnectionStringMSSQL)
+    connection = pyodbc.connect(ConnectionStringMSSQL, autocommit=True)
     return connection
     
 def to_mssql(data):
@@ -68,6 +71,7 @@ def to_mssql(data):
     """
     with get_msssql_connection() as con:
         cursor = con.cursor()
+        cursor.execute(sql_create_database)
         cursor.execute(sql_create_table)
         print(data['query']['from'], data['query']['to'], data['date'], data['result'])
         cursor.execute(f'''
